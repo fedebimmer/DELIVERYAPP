@@ -13,7 +13,7 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Allinea all'inizio per evitare centratura verticale se il contenuto è poco */
 }
 
 .container {
@@ -106,6 +106,13 @@ input:focus, textarea:focus {
     margin-bottom: 20px;
 }
 
+h2 {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.5em; /* Aggiunto per coerenza */
+}
+
+
 .clear-button {
     background-color: transparent;
     color: #e74c3c;
@@ -125,6 +132,7 @@ input:focus, textarea:focus {
 .history-list {
     max-height: 400px;
     overflow-y: auto;
+    padding-right: 10px; /* Aggiunge spazio per la scrollbar */
 }
 
 .history-item {
@@ -133,7 +141,8 @@ input:focus, textarea:focus {
     padding: 15px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    animation: fadeIn 0.5s ease;
+    animation: fadeIn 0.5s ease forwards; /* Aggiunto forwards per mantenere lo stato finale */
+    opacity: 0; /* Inizia trasparente per l'animazione */
 }
 
 @keyframes fadeIn {
@@ -145,11 +154,13 @@ input:focus, textarea:focus {
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 8px;
+    font-size: 0.9em; /* Leggermente più piccolo */
 }
 
 .history-courier {
     font-weight: 500;
     margin-bottom: 8px;
+    font-size: 0.95em;
 }
 
 .history-customers {
@@ -160,15 +171,53 @@ input:focus, textarea:focus {
 .history-customers ul {
     padding-left: 20px;
     margin-top: 5px;
+    list-style-type: disc; /* Aggiunto stile lista */
 }
 
+.history-customers li {
+    margin-bottom: 4px; /* Spazio tra items lista */
+}
+
+/* Aggiunta per la scrollbar (opzionale, stile webkit) */
+.history-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+
 @media (max-width: 768px) {
+    body {
+        padding: 10px; /* Meno padding su schermi piccoli */
+        align-items: flex-start; /* Assicura che non centri verticalmente */
+    }
+    
     .container {
         padding: 20px;
+        margin-top: 10px; /* Meno margine sopra */
     }
     
     h1 {
-        font-size: 24px;
+        font-size: 1.8em; /* Leggermente più grande */
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    input, textarea, .action-button {
+        font-size: 15px; /* Leggermente più piccolo per mobile */
     }
 }
-
