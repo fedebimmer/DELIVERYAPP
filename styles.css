@@ -13,7 +13,9 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Allinea all'inizio per evitare centratura verticale se il contenuto è poco */
+    align-items: flex-start; /* Allinea all'inizio */
+    -webkit-text-size-adjust: 100%; /* Impedisce aggiustamento automatico font su iOS */
+    text-size-adjust: 100%; /* Impedisce aggiustamento automatico font */
 }
 
 .container {
@@ -31,6 +33,7 @@ h1 {
     margin-bottom: 30px;
     color: #2c3e50;
     font-weight: 600;
+    font-size: 2em; /* Dimensione base */
 }
 
 .input-section {
@@ -52,8 +55,13 @@ input, textarea {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    font-size: 16px;
+    font-size: 16px; /* Dimensione base per input */
     transition: border 0.3s ease;
+    line-height: 1.4; /* Aggiustata interlinea input */
+}
+
+textarea {
+    min-height: 100px; /* Altezza minima per textarea */
 }
 
 input:focus, textarea:focus {
@@ -62,7 +70,7 @@ input:focus, textarea:focus {
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
-/* @tweakable Primary button color */
+/* Colori */
 :root {
     --primary-color: #3498db;
     --hover-color: #2980b9;
@@ -78,10 +86,12 @@ input:focus, textarea:focus {
     color: white;
     border: none;
     border-radius: 6px;
-    font-size: 16px;
+    font-size: 16px; /* Dimensione base bottone principale */
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    -webkit-appearance: none; /* Rimuove stili default iOS */
+    appearance: none; /* Rimuove stili default */
 }
 
 .action-button:hover {
@@ -109,7 +119,7 @@ input:focus, textarea:focus {
 h2 {
     color: #2c3e50;
     font-weight: 600;
-    font-size: 1.5em; /* Aggiunto per coerenza */
+    font-size: 1.5em; /* Dimensione base */
 }
 
 
@@ -117,11 +127,13 @@ h2 {
     background-color: transparent;
     color: #e74c3c;
     border: 1px solid #e74c3c;
-    padding: 8px 12px;
+    padding: 8px 12px; /* Padding base */
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     transition: all 0.3s ease;
+    -webkit-appearance: none; /* Rimuove stili default iOS */
+    appearance: none; /* Rimuove stili default */
 }
 
 .clear-button:hover {
@@ -130,9 +142,11 @@ h2 {
 }
 
 .history-list {
-    max-height: 400px;
+    max-height: 400px; /* Potrebbe essere ridotta su mobile se serve */
     overflow-y: auto;
-    padding-right: 10px; /* Aggiunge spazio per la scrollbar */
+    padding-right: 5px; /* Ridotto spazio per scrollbar */
+    /* Per uno scroll più fluido su touch devices */
+    -webkit-overflow-scrolling: touch;
 }
 
 .history-item {
@@ -141,8 +155,8 @@ h2 {
     padding: 15px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    animation: fadeIn 0.5s ease forwards; /* Aggiunto forwards per mantenere lo stato finale */
-    opacity: 0; /* Inizia trasparente per l'animazione */
+    animation: fadeIn 0.5s ease forwards;
+    opacity: 0;
 }
 
 @keyframes fadeIn {
@@ -154,7 +168,7 @@ h2 {
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 8px;
-    font-size: 0.9em; /* Leggermente più piccolo */
+    font-size: 0.9em;
 }
 
 .history-courier {
@@ -171,53 +185,67 @@ h2 {
 .history-customers ul {
     padding-left: 20px;
     margin-top: 5px;
-    list-style-type: disc; /* Aggiunto stile lista */
+    list-style-type: disc;
 }
 
 .history-customers li {
-    margin-bottom: 4px; /* Spazio tra items lista */
+    margin-bottom: 4px;
 }
 
-/* Aggiunta per la scrollbar (opzionale, stile webkit) */
+/* Stili Scrollbar (Webkit) */
 .history-list::-webkit-scrollbar {
-    width: 8px;
+    width: 6px; /* Più sottile */
 }
-
 .history-list::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
 }
-
 .history-list::-webkit-scrollbar-thumb {
     background: #ccc;
     border-radius: 10px;
 }
-
 .history-list::-webkit-scrollbar-thumb:hover {
     background: #aaa;
 }
 
 
+/* --- OTTIMIZZAZIONI MOBILE --- */
 @media (max-width: 768px) {
     body {
-        padding: 10px; /* Meno padding su schermi piccoli */
-        align-items: flex-start; /* Assicura che non centri verticalmente */
+        padding: 10px 5px; /* Padding ridotto ai lati */
+        line-height: 1.5; /* Interlinea leggermente ridotta */
+        align-items: flex-start;
     }
-    
+
     .container {
-        padding: 20px;
-        margin-top: 10px; /* Meno margine sopra */
+        padding: 20px; /* Padding interno ridotto */
+        margin: 10px auto; /* Margine verticale ridotto */
     }
-    
+
     h1 {
-        font-size: 1.8em; /* Leggermente più grande */
+        font-size: 1.6em; /* Dimensione titolo ridotta */
     }
 
     h2 {
-        font-size: 1.3em;
+        font-size: 1.2em; /* Dimensione sottotitolo ridotta */
     }
 
-    input, textarea, .action-button {
-        font-size: 15px; /* Leggermente più piccolo per mobile */
+    /* Assicura font leggibile e previene zoom su input focus */
+    input, textarea {
+        font-size: 16px;
+    }
+    /* Bottone principale rimane leggibile */
+    .action-button {
+        padding: 15px; /* Leggermente più padding verticale */
+        font-size: 16px;
+    }
+
+    .clear-button {
+        padding: 10px 14px; /* Padding aumentato per touch target migliore */
+        font-size: 14px;
+    }
+
+    .history-list {
+         max-height: 350px; /* Altezza massima ridotta per lasciare più spazio */
     }
 }
