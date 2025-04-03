@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const deliveryHistoryContainer = document.getElementById('deliveryHistory');
     
     /* @tweakable WhatsApp phone number */
-    const whatsappNumber = '3939393799';
+    const whatsappNumber = '3939393799'; // Assicurati che questo sia il numero corretto!
 
     /* @tweakable Animation duration for history items (in ms) */
     const animationDuration = 500;
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function formatDateTime(date) {
         const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
         const year = date.getFullYear();
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
