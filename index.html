@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery App AR Auto - Aiuti Dinamici</title>
+    <title>Delivery App AR Auto - Aiuti Grandi con Emoji</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @font-face {
@@ -32,9 +32,8 @@
       .lucide-x-circle::before { content: "\f058c"; }
       .lucide-alert-circle::before { content: "\f0111"; }
       .lucide-check-circle::before { content: "\f018f"; }
-      .lucide-info::before { content: "\f027a"; } /* Info icon */
-      .lucide-message-square-share::before { content: "\f033b"; } /* WhatsApp-like icon */
-
+      .lucide-info::before { content: "\f027a"; }
+      .lucide-message-square-share::before { content: "\f033b"; }
 
       /* Custom animation for history items */
       @keyframes fadeIn {
@@ -45,15 +44,26 @@
         animation: fadeIn 0.5s ease forwards;
       }
 
+      /* --- Pulsing Animation for Help Text --- */
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; } /* Slightly adjusted opacity for pulse */
+      }
+
       /* Style for help text (initially hidden) */
       .help-text {
         display: none; /* Hidden by default */
+        /* Increased visibility: larger size, blue color */
+        color: #2563eb; /* Slightly darker blue for better contrast */
+        font-weight: 500; /* Medium font weight */
         transition: opacity 0.3s ease-in-out;
       }
-      /* Style for visible help text */
+      /* Style for visible help text with pulsing animation */
       .help-text.visible {
         display: block; /* Show when visible class is added */
         opacity: 1;
+        /* Apply the pulse animation */
+        animation: pulse 1.5s infinite ease-in-out;
       }
     </style>
 </head>
@@ -75,7 +85,7 @@
                     <span class="lucide lucide-user mr-2 text-blue-600"></span>Nome Corriere:
                 </label>
                 <input type="text" id="courierName" placeholder="Inserisci il tuo nome" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
-                <p id="courierNameHelp" class="help-text text-xs text-gray-500 mt-1 ml-1">Inserisci il nome o la sigla del corriere che effettua il giro.</p>
+                <p id="courierNameHelp" class="help-text text-sm mt-1 ml-1">👤 Inserisci il nome o la sigla del corriere.</p>
             </div>
 
             <div class="form-group mb-4">
@@ -83,7 +93,7 @@
                      <span class="lucide lucide-list mr-2 text-blue-600"></span>Clienti da consegnare:
                 </label>
                 <textarea id="customers" rows="6" placeholder="Cliente 1&#10;Cliente 2&#10;Cliente 3" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 resize-none"></textarea>
-                 <p id="customersHelp" class="help-text text-xs text-gray-500 mt-1 ml-1">Scrivi un cliente per ogni riga. Premi Invio per andare a capo.</p>
+                 <p id="customersHelp" class="help-text text-sm mt-1 ml-1">📝 Scrivi un cliente per riga. Premi Invio per andare a capo.</p>
             </div>
 
             <button id="startDelivery" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md flex items-center justify-center transition duration-300 ease-in-out transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
@@ -136,12 +146,12 @@
             /**
              * Mostra una notifica all'utente.
              * @param {string} message - Il messaggio da visualizzare.
-             * @param {'success' | 'error' | 'info'} type - Il tipo di notifica.
+             * @param {'success' | 'error' | 'info' | 'whatsapp'} type - Il tipo di notifica.
              */
             function showNotification(message, type = 'success') {
                 notificationMessage.textContent = message;
                 // Reset classes
-                notificationDiv.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'bg-blue-500', 'bg-yellow-500');
+                notificationDiv.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'bg-blue-500', 'bg-yellow-500', 'text-yellow-900');
                 notificationIcon.classList.remove('lucide-check-circle', 'lucide-alert-circle', 'lucide-info', 'lucide-message-square-share');
 
                 switch (type) {
@@ -153,16 +163,16 @@
                         notificationDiv.classList.add('bg-red-500');
                         notificationIcon.classList.add('lucide-alert-circle');
                         break;
-                    case 'info': // Generic info
+                    case 'info':
                         notificationDiv.classList.add('bg-blue-500');
                         notificationIcon.classList.add('lucide-info');
                         break;
-                    case 'whatsapp': // Specific reminder for WhatsApp
+                    case 'whatsapp':
                         notificationDiv.classList.add('bg-yellow-500', 'text-yellow-900'); // Yellow background, dark text
-                        notificationIcon.classList.add('lucide-message-square-share'); // WhatsApp-like icon
+                        notificationIcon.classList.add('lucide-message-square-share');
                          break;
                     default:
-                        notificationDiv.classList.add('bg-gray-500'); // Fallback
+                        notificationDiv.classList.add('bg-gray-500');
                 }
                 notificationDiv.classList.remove('hidden'); // Make visible
             }
@@ -255,13 +265,13 @@
                 localStorage.removeItem(CUSTOMERS_LIST_KEY);
 
                 // --- Show WhatsApp Reminder ---
-                showNotification('Giro salvato! Ora si apre WhatsApp: ricorda di premere INVIA lì!', 'whatsapp'); // Specific WhatsApp reminder type
+                showNotification('Giro salvato! Ora si apre WhatsApp: ricorda di premere INVIA lì!', 'whatsapp');
 
                 // Open WhatsApp after a delay
                 const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
                 setTimeout(() => {
                     window.open(whatsappUrl, '_blank');
-                }, 2500); // Increased delay slightly (2.5 seconds) to ensure the user reads the reminder
+                }, 2500);
             }
 
             startDeliveryBtn.addEventListener('click', startDelivery);
