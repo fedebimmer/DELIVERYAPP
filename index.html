@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery App AR Auto - Aiuti Grandi con Emoji</title>
+    <title>Delivery App AR Auto - Correzione WhatsApp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @font-face {
@@ -47,22 +47,20 @@
       /* --- Pulsing Animation for Help Text --- */
       @keyframes pulse {
         0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; } /* Slightly adjusted opacity for pulse */
+        50% { opacity: 0.7; }
       }
 
       /* Style for help text (initially hidden) */
       .help-text {
-        display: none; /* Hidden by default */
-        /* Increased visibility: larger size, blue color */
-        color: #2563eb; /* Slightly darker blue for better contrast */
-        font-weight: 500; /* Medium font weight */
+        display: none;
+        color: #2563eb;
+        font-weight: 500;
         transition: opacity 0.3s ease-in-out;
       }
       /* Style for visible help text with pulsing animation */
       .help-text.visible {
-        display: block; /* Show when visible class is added */
+        display: block;
         opacity: 1;
-        /* Apply the pulse animation */
         animation: pulse 1.5s infinite ease-in-out;
       }
     </style>
@@ -265,13 +263,17 @@
                 localStorage.removeItem(CUSTOMERS_LIST_KEY);
 
                 // --- Show WhatsApp Reminder ---
-                showNotification('Giro salvato! Ora si apre WhatsApp: ricorda di premere INVIA lì!', 'whatsapp');
+                // Modificato messaggio per riflettere l'apertura immediata
+                showNotification('Giro salvato! Apertura WhatsApp in corso... Ricorda di premere INVIA lì!', 'whatsapp');
 
-                // Open WhatsApp after a delay
+                // --- Open WhatsApp Immediately ---
+                // Rimosso il setTimeout per migliorare la compatibilità con iOS
                 const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
-                setTimeout(() => {
-                    window.open(whatsappUrl, '_blank');
-                }, 2500);
+                window.open(whatsappUrl, '_blank'); // Apre WhatsApp subito dopo la notifica
+
+                // Potrebbe essere utile disabilitare il bottone per evitare doppi click mentre si apre WhatsApp
+                // startDeliveryBtn.disabled = true;
+                // setTimeout(() => { startDeliveryBtn.disabled = false; }, 3000); // Riabilita dopo 3 secondi
             }
 
             startDeliveryBtn.addEventListener('click', startDelivery);
