@@ -1,37 +1,350 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery App AR Auto</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Delivery App AR Auto - Icone Corrette</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @font-face {
+        font-family: 'LucideIcons';
+        /* Using jsdelivr CDN for the font */
+        src: url(https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.ttf) format('truetype');
+        font-display: swap; /* Improves font loading performance */
+      }
+      .lucide {
+        font-family: 'LucideIcons';
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-rendering: auto;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        display: inline-block; /* Ensure icons behave like inline elements */
+        vertical-align: middle; /* Align icons vertically */
+      }
+      /* Specific Lucide icon definitions using Unicode characters */
+      /* Make sure these characters match the Lucide font */
+      .lucide-send::before { content: "\f04a2"; }      /* send */
+      .lucide-trash-2::before { content: "\f0511"; }   /* trash-2 */
+      .lucide-history::before { content: "\f0261"; }   /* history */
+      .lucide-user::before { content: "\f0573"; }      /* user */
+      .lucide-list::before { content: "\f02f0"; }      /* list */
+      .lucide-x-circle::before { content: "\f058c"; } /* x-circle */
+      .lucide-alert-circle::before { content: "\f0111"; } /* alert-circle for errors */
+      .lucide-check-circle::before { content: "\f018f"; } /* check-circle for success */
+
+      /* Custom animation for history items */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .history-item-animation {
+        animation: fadeIn 0.5s ease forwards; /* Use forwards to keep the final state */
+      }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Delivery App AR Auto</h1>
-        
-        <div class="input-section">
-            <div class="form-group">
-                <label for="courierName">Nome Corriere:</label>
-                <input type="text" id="courierName" placeholder="Inserisci il tuo nome">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 font-[Inter,sans-serif]">
+    <div class="container bg-white rounded-lg shadow-lg p-6 md:p-8 w-full max-w-2xl">
+        <h1 class="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800">Delivery App AR Auto 🚚</h1>
+
+        <div id="notification" class="hidden mb-4 p-3 rounded-md text-white flex justify-between items-center transition-all duration-300">
+            <div class="flex items-center">
+              <span id="notification-icon" class="lucide mr-2 text-lg"></span>
+              <span id="notification-message"></span>
             </div>
-            
-            <div class="form-group">
-                <label for="customers">Clienti da consegnare (uno per riga):</label>
-                <textarea id="customers" rows="6" placeholder="Cliente 1&#10;Cliente 2&#10;Cliente 3"></textarea>
-            </div>
-            
-            <button id="startDelivery" class="action-button">Inizia giro</button>
+            <button onclick="document.getElementById('notification').classList.add('hidden')" class="ml-4 text-xl font-bold opacity-70 hover:opacity-100">&times;</button>
         </div>
-        
-        <div class="history-section">
-            <div class="history-header">
-                <h2>Cronologia Consegne</h2>
-                <button id="clearHistory" class="clear-button">Cancella cronologia</button>
+
+        <div class="input-section mb-8">
+            <div class="form-group mb-4">
+                <label for="courierName" class="block mb-2 font-medium text-gray-700 flex items-center">
+                    <span class="lucide lucide-user mr-2 text-blue-600"></span>Nome Corriere:
+                </label>
+                <input type="text" id="courierName" placeholder="Inserisci il tuo nome" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
             </div>
-            <div id="deliveryHistory" class="history-list"></div>
+
+            <div class="form-group mb-4">
+                <label for="customers" class="block mb-2 font-medium text-gray-700 flex items-center">
+                     <span class="lucide lucide-list mr-2 text-blue-600"></span>Clienti da consegnare (uno per riga):
+                </label>
+                <textarea id="customers" rows="6" placeholder="Cliente 1&#10;Cliente 2&#10;Cliente 3" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 resize-none"></textarea>
+            </div>
+
+            <button id="startDelivery" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md flex items-center justify-center transition duration-300 ease-in-out transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                <span class="lucide lucide-send mr-2"></span>Inizia giro
+            </button>
+        </div>
+
+        <div class="history-section border-t border-gray-200 pt-6">
+            <div class="history-header flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-700 flex items-center">
+                    <span class="lucide lucide-history mr-2 text-gray-600"></span>Cronologia Consegne
+                </h2>
+                <button id="clearHistory" class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-2 px-3 rounded-md flex items-center transition duration-300 ease-in-out shadow-sm hover:shadow-md">
+                    <span class="lucide lucide-trash-2 mr-1 text-base"></span>Cancella cronologia
+                </button>
+            </div>
+            <div id="deliveryHistory" class="history-list max-h-60 overflow-y-auto space-y-3 pr-2">
+                <p class="text-gray-500 italic text-center py-4">Nessuna consegna registrata.</p>
+            </div>
         </div>
     </div>
-    
-    <script type="module" src="script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const courierNameInput = document.getElementById('courierName');
+            const customersTextarea = document.getElementById('customers');
+            const startDeliveryBtn = document.getElementById('startDelivery');
+            const clearHistoryBtn = document.getElementById('clearHistory');
+            const deliveryHistoryContainer = document.getElementById('deliveryHistory');
+            const notificationDiv = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notification-message');
+            const notificationIcon = document.getElementById('notification-icon'); // Icon element for notifications
+
+            // --- Configuration ---
+            /* @tweakable WhatsApp phone number */
+            const whatsappNumber = '3939393799'; // Sostituisci con il numero corretto se necessario
+
+            /* @tweakable Maximum number of history items to display */
+            const maxHistoryItems = 15;
+
+            // --- LocalStorage Keys ---
+            const COURIER_NAME_KEY = 'deliveryApp_courierName';
+            const CUSTOMERS_LIST_KEY = 'deliveryApp_customersList';
+            const DELIVERY_HISTORY_KEY = 'deliveryApp_deliveryHistory';
+
+            // --- Functions ---
+
+            /**
+             * Mostra una notifica all'utente.
+             * @param {string} message - Il messaggio da visualizzare.
+             * @param {'success' | 'error'} type - Il tipo di notifica ('success' o 'error').
+             */
+            function showNotification(message, type = 'success') {
+                notificationMessage.textContent = message;
+                // Rimuovi classi precedenti e aggiungi quelle nuove
+                notificationDiv.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
+                notificationIcon.classList.remove('lucide-check-circle', 'lucide-alert-circle');
+
+                if (type === 'success') {
+                    notificationDiv.classList.add('bg-green-500');
+                    notificationIcon.classList.add('lucide-check-circle'); // Icona di successo
+                } else if (type === 'error') {
+                    notificationDiv.classList.add('bg-red-500');
+                    notificationIcon.classList.add('lucide-alert-circle'); // Icona di errore
+                }
+                notificationDiv.classList.remove('hidden'); // Rendi visibile
+
+                // Optional: Nascondi automaticamente dopo un po'
+                // setTimeout(() => {
+                //    if (!notificationDiv.classList.contains('hidden')) {
+                //       notificationDiv.classList.add('hidden');
+                //    }
+                // }, 5000);
+            }
+
+            /**
+             * Carica i dati salvati (nome corriere, lista clienti non inviata, cronologia) dal localStorage.
+             */
+            function loadFromLocalStorage() {
+                const savedCourierName = localStorage.getItem(COURIER_NAME_KEY);
+                if (savedCourierName) {
+                    courierNameInput.value = savedCourierName;
+                }
+                const savedCustomersList = localStorage.getItem(CUSTOMERS_LIST_KEY);
+                if (savedCustomersList) {
+                    customersTextarea.value = savedCustomersList;
+                }
+                loadDeliveryHistory(); // Carica e visualizza la cronologia
+            }
+
+            /**
+             * Salva il nome del corriere nel localStorage ogni volta che cambia.
+             */
+            courierNameInput.addEventListener('input', () => {
+                localStorage.setItem(COURIER_NAME_KEY, courierNameInput.value);
+            });
+
+            /**
+             * Salva la lista clienti temporanea nel localStorage ogni volta che cambia.
+             */
+            customersTextarea.addEventListener('input', () => {
+                localStorage.setItem(CUSTOMERS_LIST_KEY, customersTextarea.value);
+            });
+
+            /**
+             * Gestisce il click sul pulsante "Inizia giro".
+             */
+            function startDelivery() {
+                const courierName = courierNameInput.value.trim();
+                const customersText = customersTextarea.value.trim();
+
+                // --- Validazione Input ---
+                if (!courierName) {
+                    showNotification('Inserisci il nome del corriere', 'error');
+                    courierNameInput.focus();
+                    return;
+                }
+                if (!customersText) {
+                    showNotification('Inserisci almeno un cliente', 'error');
+                    customersTextarea.focus();
+                    return;
+                }
+
+                // Analizza i clienti, rimuovendo righe vuote
+                const customers = customersText.split('\n')
+                                             .map(c => c.trim()) // Rimuovi spazi bianchi inizio/fine
+                                             .filter(customer => customer !== ''); // Rimuovi righe vuote
+
+                if (customers.length === 0) {
+                    showNotification('La lista clienti non può contenere solo righe vuote.', 'error');
+                    customersTextarea.focus();
+                    return;
+                }
+
+                // --- Procedura di Invio ---
+                const now = new Date();
+                const formattedDate = formatDateTime(now);
+                const message = createWhatsAppMessage(courierName, customers, formattedDate);
+
+                saveToHistory(formattedDate, courierName, customers); // Salva nella cronologia
+
+                // Pulisci l'area testo clienti e il relativo localStorage
+                customersTextarea.value = '';
+                localStorage.removeItem(CUSTOMERS_LIST_KEY);
+
+                showNotification('Giro creato e aggiunto alla cronologia! Apertura WhatsApp...', 'success');
+
+                // Apri WhatsApp dopo un breve ritardo
+                const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
+                setTimeout(() => {
+                    window.open(whatsappUrl, '_blank');
+                }, 1500); // Attendi 1.5 secondi
+            }
+
+            // Aggiungi listener al pulsante
+            startDeliveryBtn.addEventListener('click', startDelivery);
+
+            /**
+             * Crea il messaggio formattato per WhatsApp.
+             * @param {string} courierName - Nome del corriere.
+             * @param {string[]} customers - Array di nomi dei clienti.
+             * @param {string} dateTime - Data e ora formattate.
+             * @returns {string} - Il messaggio per WhatsApp.
+             */
+            function createWhatsAppMessage(courierName, customers, dateTime) {
+                let message = `🚚 *Giro consegne iniziato* 🚚\n\n`;
+                message += `*Corriere:* ${courierName}\n`;
+                message += `*Data/Ora partenza:* ${dateTime}\n\n`;
+                message += `*Clienti da consegnare:*\n`;
+                customers.forEach((customer, index) => {
+                    message += `${index + 1}. ${customer}\n`;
+                });
+                message += `\nTotale clienti: ${customers.length}`;
+                return message;
+            }
+
+            /**
+             * Salva una nuova consegna nella cronologia (localStorage).
+             * @param {string} dateTime - Data e ora formattate.
+             * @param {string} courierName - Nome del corriere.
+             * @param {string[]} customers - Array di nomi dei clienti.
+             */
+            function saveToHistory(dateTime, courierName, customers) {
+                let history = JSON.parse(localStorage.getItem(DELIVERY_HISTORY_KEY) || '[]');
+                const newDelivery = {
+                    id: Date.now(), // ID univoco basato sul timestamp
+                    dateTime,
+                    courierName,
+                    customers,
+                };
+                history.unshift(newDelivery); // Aggiungi all'inizio (più recente)
+                // Limita la dimensione della cronologia
+                if (history.length > maxHistoryItems) {
+                    history = history.slice(0, maxHistoryItems);
+                }
+                localStorage.setItem(DELIVERY_HISTORY_KEY, JSON.stringify(history));
+                loadDeliveryHistory(); // Aggiorna la visualizzazione della cronologia
+            }
+
+            /**
+             * Carica la cronologia dal localStorage e la visualizza nell'HTML.
+             */
+            function loadDeliveryHistory() {
+                const history = JSON.parse(localStorage.getItem(DELIVERY_HISTORY_KEY) || '[]');
+                deliveryHistoryContainer.innerHTML = ''; // Pulisci la visualizzazione corrente
+
+                if (history.length === 0) {
+                    deliveryHistoryContainer.innerHTML = '<p class="text-gray-500 italic text-center py-4">Nessuna consegna registrata.</p>';
+                    return; // Esci se non c'è cronologia
+                }
+
+                // Crea e aggiungi elementi HTML per ogni consegna nella cronologia
+                history.forEach((delivery, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'bg-gray-50 border border-gray-200 rounded-md p-4 shadow-sm history-item-animation';
+                    historyItem.style.animationDelay = `${index * 100}ms`; // Animazione sfalsata
+
+                    historyItem.innerHTML = `
+                        <div class="font-semibold text-gray-800 mb-2">${delivery.dateTime}</div>
+                        <div class="text-sm text-gray-600 mb-2">Corriere: ${delivery.courierName}</div>
+                        <div class="text-sm text-gray-700">
+                            <span class="font-medium">Clienti:</span>
+                            <ul class="list-disc list-inside pl-2 mt-1 space-y-1">
+                                ${delivery.customers.map(customer => `<li>${escapeHTML(customer)}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    deliveryHistoryContainer.appendChild(historyItem);
+                });
+            }
+
+             /**
+             * Funzione di utility per escapare l'HTML ed evitare XSS (Cross-Site Scripting).
+             * @param {string} str - La stringa da escapare.
+             * @returns {string} - La stringa escapata.
+             */
+             function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+             }
+
+
+            /**
+             * Gestisce il click sul pulsante "Cancella cronologia".
+             */
+            function clearHistory() {
+                if (confirm('Sei sicuro di voler cancellare tutta la cronologia delle consegne? Questa azione è irreversibile.')) {
+                    localStorage.removeItem(DELIVERY_HISTORY_KEY);
+                    loadDeliveryHistory(); // Aggiorna UI
+                    showNotification('Cronologia cancellata con successo.', 'success');
+                }
+            }
+
+            // Aggiungi listener al pulsante
+            clearHistoryBtn.addEventListener('click', clearHistory);
+
+            /**
+             * Formatta un oggetto Date in una stringa "GG/MM/AAAA HH:MM".
+             * @param {Date} date - L'oggetto Date da formattare.
+             * @returns {string} - La data e ora formattate.
+             */
+            function formatDateTime(date) {
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Mesi sono 0-based
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            }
+
+            // --- Initial Load ---
+            loadFromLocalStorage(); // Carica tutti i dati all'avvio
+        });
+    </script>
 </body>
 </html>
